@@ -2,6 +2,10 @@
 
 namespace AymanAlhattami\FilamentPageWithSidebar\Traits;
 
+use AymanAlhattami\FilamentPageWithSidebar\Enums\PageSidebarLayoutEnum;
+use AymanAlhattami\FilamentPageWithSidebar\FilamentPageSidebar;
+use Illuminate\Database\Eloquent\Model;
+
 trait HasPageSidebar
 {
     /**
@@ -12,6 +16,8 @@ trait HasPageSidebar
      */
 
     public static bool $hasSidebar = true;
+
+    public static PageSidebarLayoutEnum $sidebarNavigationLayout = PageSidebarLayoutEnum::SIDE;
 
     /**
      * public function mountHasPageSidebar
@@ -49,5 +55,25 @@ trait HasPageSidebar
 
         // Else:
         throw new \Exception('No view detected for the Sidebar. Implement Filament\Pages\Page object with valid static $view');
+    }
+
+    static public function getSidebarNavigationLayout(): PageSidebarLayoutEnum
+    {
+        return static::$sidebarNavigationLayout;
+    }
+
+    static public function getSidebarNavigation(FilamentPageSidebar $builder)
+    {
+        return $builder;
+    }
+
+    static public function getSidebarSubNavigation(FilamentPageSidebar $builder)
+    {
+        return $builder;
+    }
+
+    static public function sidebar(Model $record): FilamentPageSidebar
+    {
+        return FilamentPageSidebar::make();
     }
 }

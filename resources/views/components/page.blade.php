@@ -1,47 +1,43 @@
 @php
-    $sidebar = static::getResource()::sidebar($this->record);
+    $sidebar = \AymanAlhattami\FilamentPageWithSidebar\FilamentPageSidebar::make($this); //static::getResource()::sidebar($this->record);
+    [$navigation, $subNavigation] = $sidebar->getSidebarNavigation(); //SidebarNavigation();
+    
+    $isTopNavigation = $sidebar->isLayout(\AymanAlhattami\FilamentPageWithSidebar\Enums\PageSidebarLayoutEnum::TOP);
 @endphp
 
-<div class="mt-8">
-    <div class="grid grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
-        <div
-            class="col-span-12 md:col-span-{{ config('filament-page-with-sidebar.sidebar_width.md') }} lg:col-span-{{ config('filament-page-with-sidebar.sidebar_width.lg') }} xl:col-span-{{ config('filament-page-with-sidebar.sidebar_width.xl') }} 2xl:col-span-{{ config('filament-page-with-sidebar.sidebar_width.2xl') }} rounded">
-            <div class="">
-                <div class="flex items-center rtl:space-x-reverse">
-                    @if ($sidebar->getTitle() != null || $sidebar->getDescription() != null)
-                        <div class="w-full">
-                            @if ($sidebar->getTitle() != null)
-                                <h3 class="text-base font-medium text-slate-700 dark:text-navy-100 truncate block">
-                                    {{ $sidebar->getTitle() }}
-                                </h3>
-                            @endif
+<div class="mt-4">
+    @switch($isTopNavigation)
+        @case(true)
+            <x-filament-page-with-sidebar::topbar :navigation="$navigation" :hasNavigation="true" :title="$sidebar->getTitle()" :description="$sidebar->getDescription()" />
 
-                            @if ($sidebar->getDescription())
-                                <p class="text-xs text-gray-500">
-                                    {{ $sidebar->getDescription() }}
-                                </p>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-                <ul class="@if ($sidebar->getTitle() != null || $sidebar->getDescription() != null) mt-4 @endif space-y-2 font-inter font-medium"
-                    wire:ignore>
-                    @foreach ($sidebar->getNavigationItems() as $item)
-                        @if (!$item->isHidden())
-                            <x-filament-page-with-sidebar::item :active="$item->isActive()" :icon="$item->getIcon()"
-                                :active-icon="$item->getActiveIcon()" :url="$item->getUrl()" :badge="$item->getBadge()" :badgeColor="$item->getBadgeColor()"
-                                :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()">
-                                {{ $item->getLabel() }}
-                            </x-filament-page-with-sidebar::item>
-                        @endif
-                    @endforeach
-                </ul>
+            <div style="margin-top: -2em">
+                {{ $slot }}
             </div>
-        </div>
+        @break
 
-        <div
-            class="col-span-12 md:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.md') }} lg:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.lg') }} xl:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.xl') }} 2xl:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.2xl') }}" style="margin-top: -2em">
-            {{ $slot }}
-        </div>
-    </div>
+        @case(false)
+            <div class="grid grid-cols-12 gap-4 sm:gap-5 lg:gap-6 mt-8">
+                <div
+                    class="col-span-12 md:col-span-{{ config('filament-page-with-sidebar.sidebar_width.md') }} lg:col-span-{{ config('filament-page-with-sidebar.sidebar_width.lg') }} xl:col-span-{{ config('filament-page-with-sidebar.sidebar_width.xl') }} 2xl:col-span-{{ config('filament-page-with-sidebar.sidebar_width.2xl') }} rounded">
+                    <div>
+                        <x-filament-page-with-sidebar::sidebar :navigation="$navigation" :hasNavigation="!$isTopNavigation" :title="$sidebar->getTitle()"
+                            :description="$sidebar->getDescription()" />
+                    </div>
+                </div>
+
+                <div
+                    class="col-span-12 md:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.md') }} lg:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.lg') }} xl:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.xl') }} 2xl:col-span-{{ 12 - config('filament-page-with-sidebar.sidebar_width.2xl') }}">
+
+                    @if ($subNavigation)
+                        <x-filament-page-with-sidebar::topbar :navigation="$subNavigation" :hasNavigation="true" />
+                    @endif
+
+                    <div style="margin-top: -2em">
+                        {{ $slot }}
+                    </div>
+                </div>
+            </div>
+        @break
+
+    @endswitch
 </div>

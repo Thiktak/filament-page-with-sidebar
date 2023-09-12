@@ -271,3 +271,124 @@ public static function sidebar(Model $record): FilamentPageSidebar
 ```
 
 [Demo Project Link](https://github.com/aymanalhattami/filament-page-with-sidebar-project)
+
+
+# Version with Filament objets
+
+```php
+    public static function getSidebarSubNavigation(FilamentPageSidebar $builder)
+    {
+        return $builder
+            ->items([
+                \Filament\Navigation\NavigationItem::make('home')
+                    ->label('Profile')
+                    ->icon('heroicon-o-home')
+                    ->activeIcon('heroicon-s-users')
+                    ->url($urlPeople = '?activeTab=People')
+                    ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+
+                \Filament\Navigation\NavigationItem::make('home')
+                    ->label('Feeds')
+                    ->icon('heroicon-o-home')
+                    ->badge('2')
+                    ->activeIcon('heroicon-s-users')
+                    ->url($urlPeople = '?activeTab=People0')
+                    ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+
+                \Filament\Navigation\NavigationItem::make('home')
+                    ->label('News')
+                    ->icon('heroicon-o-home')
+                    ->activeIcon('heroicon-s-users')
+                    ->url($urlPeople = '?activeTab=People2')
+                    ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+
+                \Filament\Navigation\NavigationItem::make('home')
+                    ->label('Photos')
+                    ->icon('heroicon-o-home')
+                    ->activeIcon('heroicon-s-users')
+                    ->url($urlPeople = '?activeTab=People3')
+                    ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+            ])
+            ->groups([
+                \Filament\Navigation\NavigationGroup::make('More')
+                    ->items([
+                        \Filament\Navigation\NavigationItem::make('More')
+                            ->label('More !!')
+                            ->icon('heroicon-o-home')
+                            ->activeIcon('heroicon-s-users')
+                            ->url($urlPeople = '?activeTab=People3')
+                            ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+
+                        \Filament\Navigation\NavigationItem::make('More2')
+                            ->label('More !!')
+                            ->icon('heroicon-o-home')
+                            ->activeIcon('heroicon-s-users')
+                            ->url($urlPeople = '?activeTab=People3')
+                            ->isActiveWhen(fn () => request()->fullUrlIs('*' . $urlPeople . '*')),
+                    ])
+            ]);
+    }
+
+    public static function sidebar(Model $record): FilamentPageSidebar
+    {
+        return FilamentPageSidebar::make()
+
+            ->setTitle('My title test') //$record)
+            ->setDescription(fn () => __($record->kind . ' dashboard'))
+
+            ->setNavigationItems([
+                PageNavigationItem::make('Dashboard')
+                    ->label(fn () => __($record->kind . ' dashboard'))
+                    ->url(function () use ($record) {
+                        return '#';
+                    })
+                    ->icon('heroicon-o-bookmark')
+                    ->isActiveWhen(fn () => true),
+
+                PageNavigationItem::make('Organization')
+                    ->url(function () use ($record) {
+                        return '#';
+                    })
+                    ->icon('heroicon-o-user-group'),
+
+                PageNavigationItem::make('Matrix')
+                    ->url(function () use ($record) {
+                        return '#';
+                    })
+                    ->icon('heroicon-m-table-cells')
+                    ->group('Matrix'),
+
+                PageNavigationItem::make('Answers')
+                    ->url(function () use ($record) {
+                        return '#';
+                    })
+                    ->icon('heroicon-m-table-cells')
+                    ->group('Matrix'),
+
+                PageNavigationItem::make('History')
+                    ->url(function () use ($record) {
+                        return '#';
+                    })
+                    ->icon('heroicon-o-clock')
+                    ->group('Matrix')
+                    ->badge("badge name"),
+
+                PageNavigationItem::make('Review')
+                    ->url(function () use ($record) {
+                        return '#'; //static::getUrl('dashboard', ['record' => $record->id]);
+                    })
+                    ->icon('heroicon-s-magnifying-glass-plus')
+                    ->group('Actions'),
+
+                /*PageNavigationBlock::make()
+                    ->schema([
+                        self::infolistComposantChecklist()
+                            ->label(false)
+                    ])
+                    ->group('More')*/
+
+                /*PageNavigationHTML::make()
+                    ->setHtml('<hr class="my-2" />')*/
+            ]);
+    }
+```
